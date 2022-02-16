@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Server</title>
+</head>
+
+<body>
+    <h1>Build Server</h1>
+    <div class="container">
+        <table>
+            {{range .Projects}}
+            <tr>
+                <td><label class="project">{{.Name}}</label></td>
+                <td><a class="build" href="/build/{{.Name}}" target="_blank">Build</a></td>
+                <td><span class="status">{{.Status}}</span></td>
+                <td> <a href='/errors/{{.Name}}' target="_blank">show errors</a></td>
+                <td>Last build: {{.LastBuildDate.Format "2006-01-02 15:04:05"}} Duration: {{.LastBuildDuration}} secs</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+</body>
+<style>
+    .project {
+        margin-right: 20px;
+        width: 200px;
+    }
+
+    .status {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+</style>
+
+</html>

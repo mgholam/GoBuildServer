@@ -1,0 +1,21 @@
+{
+  "Port": 5000,
+  "Projects": [
+    {
+      "Name": "Hydra",
+      "Status": "error",
+      "LastBuildDate": "2022-02-15T22:04:31.270920154+03:30",
+      "CmdPath": "/bin/bash",
+      "ErorrPath": "errors.txt",
+      "LastBuildDuration": 14
+    },
+    {
+      "Name": "Madavi MIS",
+      "Status": "error",
+      "LastBuildDate": "2022-02-15T20:36:44.43483011+03:30",
+      "CmdPath": "/bin/bash",
+      "ErorrPath": "errors.txt",
+      "LastBuildDuration": 8
+    }
+  ]
+}
