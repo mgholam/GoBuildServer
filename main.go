@@ -36,6 +36,37 @@ var config Config
 // TODO : html ui
 
 func main() {
+	readConfig()
+
+	tmpl := template.Must(template.ParseFiles("www/index.html"))
+
+	http.HandleFunc("/build/", build)
+	http.HandleFunc("/status/", status)
+	http.HandleFunc("/errors/", errors)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl.Execute(w, config)
+	})
+
+	// fileServer := http.FileServer(http.Dir("./www"))
+	// http.Handle("/", fileServer)
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	log.Printf("Starting server on port %d\n", config.Port)
+	go func() {
+		if err := http.ListenAndServe(":"+strconv.Itoa(config.Port), nil); err != nil {
+			log.Fatal(err)
+		}
+	}()
+	<-done
+	log.Println()
+	log.Println("Shutting down...")
+	writeConfig()
+}
+
+func readConfig() {
 	config = Config{Port: 2000}
 
 	config.Projects = []*Project{
@@ -63,29 +94,6 @@ func main() {
 			i.Status = ""
 		}
 	}
-	tmpl := template.Must(template.ParseFiles("www/index.html"))
-
-	http.HandleFunc("/build/", build)
-	http.HandleFunc("/status/", status)
-	http.HandleFunc("/errors/", errors)
-
-	// fileServer := http.FileServer(http.Dir("./www"))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl.Execute(w, config)
-	})
-
-	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	log.Printf("Starting server on port %d\n", config.Port)
-	go func() {
-		if err := http.ListenAndServe(":"+strconv.Itoa(config.Port), nil); err != nil {
-			log.Fatal(err)
-		}
-	}()
-	<-done
-	log.Println("Shutting down...")
-	writeConfig()
 }
 
 func writeConfig() {
@@ -145,7 +153,6 @@ func build(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		ex.Run()
-		// ex.Process.Wait()
 		prj.LastBuildDuration = int(time.Since(prj.LastBuildDate).Seconds())
 		log.Println("build done :", prj.Name)
 		log.Println("duration :", prj.LastBuildDuration)

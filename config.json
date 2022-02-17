@@ -3,11 +3,11 @@
   "Projects": [
     {
       "Name": "Hydra",
-      "Status": "error",
-      "LastBuildDate": "2022-02-15T22:04:31.270920154+03:30",
+      "Status": "",
+      "LastBuildDate": "2022-02-17T09:45:17.110206156+03:30",
       "CmdPath": "/bin/bash",
       "ErorrPath": "errors.txt",
-      "LastBuildDuration": 14
+      "LastBuildDuration": 0
     },
     {
       "Name": "Madavi MIS",
