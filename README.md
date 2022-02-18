@@ -4,7 +4,7 @@ A simple web server to build any project via scripts for Continuous Integration/
 
 ## Config file
 
- ```
+ ```json
  {
    "Port": 5000,
    "Projects": [
@@ -22,5 +22,23 @@ A simple web server to build any project via scripts for Continuous Integration/
 - **Port** : the servers web port
 - **CmdPath** : the platform specific build script to build the project and create `errors.txt` file on errors
 - **ErrorPath** : the path to the `errors.txt` file for build errors
+
+### Example build script for .net
+The following `build.cmd` file will build 3 solutions in order and stop if any fails outputing the errors to `errors.txt`
+
+```
+msbuild  project1\All.sln -v:m -flp1:logfile=errors.txt;errorsonly
+if errorlevel 1 goto errorDone
+
+msbuild  project2\All.sln -v:m -flp1:logfile=errors.txt;errorsonly
+if errorlevel 1 goto errorDone
+
+msbuild  project3\all.sln -v:m -flp1:logfile=errors.txt;errorsonly
+if errorlevel 1 goto errorDone
+
+
+:errorDone
+
+```
 
 
