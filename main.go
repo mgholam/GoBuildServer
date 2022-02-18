@@ -22,7 +22,7 @@ type Project struct {
 	Status            string
 	LastBuildDate     time.Time
 	CmdPath           string
-	ErorrPath         string
+	ErrorPath         string
 	LastBuildDuration int
 }
 
@@ -75,7 +75,7 @@ func readConfig() {
 			Status:            "",
 			LastBuildDate:     time.Now(),
 			CmdPath:           "c:/folder/build.cmd",
-			ErorrPath:         "c:/folder/error.txt",
+			ErrorPath:         "c:/folder/error.txt",
 			LastBuildDuration: 1000,
 		},
 	}
@@ -108,7 +108,7 @@ func errors(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := ioutil.ReadFile(prj.ErorrPath)
+	b, err := ioutil.ReadFile(prj.ErrorPath)
 	if err != nil {
 		log.Println("ERROR", err.Error())
 		return
@@ -156,7 +156,7 @@ func build(w http.ResponseWriter, r *http.Request) {
 		prj.LastBuildDuration = int(time.Since(prj.LastBuildDate).Seconds())
 		log.Println("build done :", prj.Name)
 		log.Println("duration :", prj.LastBuildDuration)
-		st, err := os.Stat(prj.ErorrPath)
+		st, err := os.Stat(prj.ErrorPath)
 		if err != nil {
 			log.Println("ERROR" + err.Error())
 			return
