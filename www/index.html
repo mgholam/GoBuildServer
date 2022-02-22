@@ -19,7 +19,8 @@
                 <td><a class="build" href="#" onclick="dobuild(event,'/build/{{.Name}}')">Build</a></td>
                 <td><span class="status">{{.Status}}</span></td>
                 <td><a href='/errors/{{.Name}}' target="_blank">show errors</a></td>
-                <td>Last build: {{.LastBuildDate.Format "2006-01-02 15:04:05"}} Duration: {{.LastBuildDuration}} secs
+                <td>Last build: <span class="bold">{{.LastBuildDate.Format "2006-01-02 15:04:05"}}</span>
+                    Duration: <span class="bold">{{.LastBuildDuration}} secs</span>
                 </td>
             </tr>
             {{end}}
@@ -42,6 +43,10 @@
         width: 200px;
     }
 
+    .bold {
+        font-weight: 600;
+    }
+
     table {
         border-collapse: collapse;
     }
@@ -50,13 +55,14 @@
         height: 50px;
     }
 
-    td{
-        padding-left:5px;
+    td {
+        padding-left: 5px;
     }
 
     .status {
         margin-left: 10px;
         margin-right: 10px;
+        font-weight: 600;
     }
 </style>
 
