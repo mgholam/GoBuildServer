@@ -33,7 +33,7 @@ type Config struct {
 
 var config Config
 
-// TODO : html ui
+// TODO : refresh page when building
 
 func main() {
 	readConfig()
