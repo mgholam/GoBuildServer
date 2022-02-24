@@ -33,8 +33,6 @@ type Config struct {
 
 var config Config
 
-// TODO : refresh page when building
-
 func main() {
 	readConfig()
 

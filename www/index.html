@@ -8,7 +8,7 @@
     <title>Build Server</title>
 </head>
 
-<body>
+<body onload="setuprefresh()">
     <h1>Build Server</h1>
     <div class="container">
         <table>
@@ -36,6 +36,18 @@
                 location.reload();
             });
     }
+
+    function setuprefresh(){
+        var doit = false;
+        {{range .Projects}}
+            {{if eq .Status "building"}} doit = true; {{end}}
+        {{end}}
+        // console.log(doit);
+        if(doit){
+            window.setInterval(()=>location.reload(), 5000);
+        }
+    }
+
 </script>
 <style>
     .project {
