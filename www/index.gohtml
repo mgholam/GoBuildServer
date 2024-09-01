@@ -13,8 +13,11 @@
     <div class="container">
         <table>
             {{range .Projects}}
-            <tr {{if eq .Status "done" }} style="background-color:lightgreen" {{else if eq .Status "error" }}
-                style="background-color:lightpink" {{end}}>
+            <tr {{if eq .Status "done" }}
+                    style="background-color:lightgreen"
+                {{else if eq .Status "error" }}
+                    style="background-color:lightpink"
+                {{end}}>
                 <td><label class="project">{{.Name}}</label></td>
                 <td><a class="build" href="#" onclick="dobuild(event,'/build/{{.Name}}')">Build</a></td>
                 <td><span class="status">{{.Status}}</span></td>

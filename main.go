@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -36,7 +35,7 @@ var config Config
 func main() {
 	readConfig()
 
-	tmpl := template.Must(template.ParseFiles("www/index.html"))
+	tmpl := template.Must(template.ParseFiles("www/index.gohtml"))
 
 	http.HandleFunc("/build/", build)
 	http.HandleFunc("/status/", status)
@@ -80,7 +79,7 @@ func readConfig() {
 
 	if fileExists("config.json") {
 		log.Println("reading config")
-		b, _ := ioutil.ReadFile("config.json")
+		b, _ := os.ReadFile("config.json")
 		json.Unmarshal(b, &config)
 	} else {
 		writeConfig()
@@ -96,7 +95,7 @@ func readConfig() {
 
 func writeConfig() {
 	b, _ := json.MarshalIndent(config, "", "  ")
-	ioutil.WriteFile("config.json", b, 0644)
+	os.WriteFile("config.json", b, 0644)
 }
 
 func errors(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +105,7 @@ func errors(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := ioutil.ReadFile(prj.ErrorPath)
+	b, err := os.ReadFile(prj.ErrorPath)
 	if err != nil {
 		log.Println("ERROR", err.Error())
 		return
@@ -150,7 +149,12 @@ func build(w http.ResponseWriter, r *http.Request) {
 	ex.Dir = path.Dir(prj.CmdPath)
 
 	go func() {
-		ex.Run()
+		e := ex.Run()
+		failed := false
+		if e != nil {
+			log.Println(e)
+			failed = true
+		}
 		prj.LastBuildDuration = int(time.Since(prj.LastBuildDate).Seconds())
 		log.Println("build done :", prj.Name)
 		log.Println("duration :", prj.LastBuildDuration)
@@ -159,7 +163,7 @@ func build(w http.ResponseWriter, r *http.Request) {
 			log.Println("ERROR" + err.Error())
 			return
 		}
-		if st.Size() > 0 {
+		if st.Size() > 0 && failed {
 			prj.Status = "error"
 			return
 		}
