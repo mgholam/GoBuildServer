@@ -17,5 +17,6 @@
       "ErrorPath": "errors.txt",
       "LastBuildDuration": 8
     }
-  ]
+  ],
+  "LogToFile": true
 }

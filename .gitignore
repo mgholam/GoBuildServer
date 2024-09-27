@@ -1,3 +1,6 @@
 gobuilder.exe
 .vscode
 gobuilder
+RunAsService.exe
+log.txt
+config.json
