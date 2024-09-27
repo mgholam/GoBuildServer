@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -26,15 +28,25 @@ type Project struct {
 }
 
 type Config struct {
-	Port     int
-	Projects []*Project
+	Port      int
+	Projects  []*Project
+	LogToFile bool
 }
 
 var config Config
 
 func main() {
+	setWorkingDirectory()
 	readConfig()
-
+	if config.LogToFile {
+		logfile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		defer logfile.Close()
+		wrt := io.MultiWriter(os.Stdout, logfile)
+		log.SetOutput(wrt)
+	}
 	tmpl := template.Must(template.ParseFiles("www/index.gohtml"))
 
 	http.HandleFunc("/build/", build)
@@ -64,7 +76,10 @@ func main() {
 }
 
 func readConfig() {
-	config = Config{Port: 2000}
+	config = Config{
+		Port:      2000,
+		LogToFile: true,
+	}
 
 	config.Projects = []*Project{
 		{
@@ -81,9 +96,8 @@ func readConfig() {
 		log.Println("reading config")
 		b, _ := os.ReadFile("config.json")
 		json.Unmarshal(b, &config)
-	} else {
-		writeConfig()
 	}
+	writeConfig()
 
 	// reset project status if server crashed
 	for _, i := range config.Projects {
@@ -184,4 +198,9 @@ func (c *Config) findProject(name string) *Project {
 func fileExists(fn string) bool {
 	_, e := os.Stat(fn)
 	return e == nil
+}
+
+func setWorkingDirectory() {
+	f, _ := os.Executable()
+	os.Chdir(filepath.Dir(f))
 }
